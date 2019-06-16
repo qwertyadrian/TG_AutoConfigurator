@@ -1,2 +1,9 @@
-# TG_AutoConfigurator
-Telegram бот для настройки автопостинга из ВК в Telegram (бота TG_AutoPoster)
+## TG_AutoConfigurator
+Бот-конфигуратор, используемый для кофигурации автопостинга (бота [TG_AutoPoster](https://github.com/qwertyadrian/TG_AutoPoster)) через Telegram чат.
+
+#### Внимание! В Linux системах бот работает в режиме демона.
+То есть вы можете запустить бота в консоли и выйти из нее, не завершая при этом работу бота.
+В Windows по техническим причинам реализация этого режима работы затруднена.
+***
+
+Для настройки бота создайте файл config.ini и скопируйте в него содердимое файла [config.ini.example](/config.ini.example)

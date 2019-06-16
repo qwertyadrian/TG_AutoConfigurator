@@ -6,8 +6,12 @@ __pycache__/
 # C extensions
 *.so
 
+# Program cache
+data/
+
 # Distribution / packaging
 .Python
+env/
 build/
 develop-eggs/
 dist/
@@ -23,7 +27,11 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
+vk_config*
+
+# Pycharm files
+.idea/
+test.py
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -81,8 +89,10 @@ celerybeat-schedule
 # SageMath parsed files
 *.sage.py
 
-# Environments
+# dotenv
 .env
+
+# virtualenv
 .venv
 env/
 venv/
@@ -102,3 +112,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+tests/
+config.ini
+*.pid

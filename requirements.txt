@@ -1,0 +1,3 @@
+pyTelegramBotAPI
+loguru
+python-daemon
