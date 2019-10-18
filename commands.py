@@ -1,5 +1,7 @@
 import messages
 from config_tools import remove_section, add_section
+from parser import VkPostParser
+from sender import PostSender
 from random import choice
 import configparser
 import os
@@ -11,7 +13,7 @@ message_breakers = [':', ' ', '\n']
 max_message_length = 4091
 
 
-def setup(bot, admin_id, bot_config_path, bot_logs_folder_path):
+def setup(bot, admin_id, bot_config_path, bot_logs_folder_path, session, api_vk, sender_bot):
     def admin_check(message):
         logger.info('Пользователь {message.from_user.first_name} {message.from_user.last_name} '
                     'c ID {message.from_user.id} использовал команду {message.text}', message=message)
@@ -58,7 +60,7 @@ def setup(bot, admin_id, bot_config_path, bot_logs_folder_path):
     @bot.message_handler(func=admin_check, commands=['list', 'sources_list'])
     def source_list(message):
         config = configparser.ConfigParser()
-        config.read_file(open(bot_config_path, 'r', encoding='utf-8'))
+        config.read(bot_config_path)
         sources_list = config.sections()[1:]
         sources = 'Список источников:\nИсточник        ---->        Назначение  (ID последнего отправленного поста)\n\n'
         for source in sources_list:
@@ -106,6 +108,30 @@ def setup(bot, admin_id, bot_config_path, bot_logs_folder_path):
         except FileNotFoundError:
             bot.reply_to(message, 'Невозможно завершить процесс бота. '
                                   'Возможно, бот запущен в Windows или бот запущен не в режиме демона.')
+
+    @bot.message_handler(func=admin_check, commands=['send', 'send_post'])
+    def send_post(message):
+        args = extract_arg(message.text)
+        tg_autoposter_config = configparser.ConfigParser()
+        tg_autoposter_config.read(bot_config_path)
+        if args:
+            post_link = args[0].replace('https://vk.com/', '').replace('https://m.vk.com/', '').split('?w=')
+            try:
+                group = post_link[0]
+            except IndexError:
+                group = ''
+            try:
+                chat_id = args[1]
+            except IndexError:
+                chat_id = tg_autoposter_config.get('global', 'main_group')
+            post_id = post_link[-1].replace('wall', '').replace('%2Fall', '')
+            post_json = api_vk.wall.getById(posts=[post_id])[0]
+            post = VkPostParser(post_json, group, session, api_vk, tg_autoposter_config)
+            post.generate_post()
+            sender = PostSender(sender_bot, post, chat_id)
+            sender.send_post()
+        else:
+            bot.reply_to(message, messages.SEND_POST, parse_mode='Markdown')
 
 
 def extract_arg(arg):

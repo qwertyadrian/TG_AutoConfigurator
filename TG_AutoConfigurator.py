@@ -1,9 +1,13 @@
 import configparser
 import telebot
+from telegram.utils.request import Request
+from telegram import Bot
 from telebot import apihelper
 import sys
 import commands
 from loguru import logger
+from vk_api import VkApi
+from handlers import *
 
 warn_message = 'Невозможно прочитать конфигурацию бота TG_AutoPoster. ' \
                 'В следствии этого не будут работать команды /list /sources_list /remove /add /get_config'
@@ -12,19 +16,30 @@ warn_message = 'Невозможно прочитать конфигурацию
 def main():
     # Чтение конфигурации бота из файла config.ini
     config = configparser.ConfigParser()
-    config.read_file(open('config.ini', 'r', encoding='utf-8'))
+    config.read('config.ini')
     # Настройка прокси, если указано в конфиге
     if config.get('DEFAULT', 'proxy_url', fallback=None):
         apihelper.proxy = {'https': config.get('DEFAULT', 'proxy_url')}
+        request = Request(proxy_url=config.get('DEFAULT', 'proxy_url'), connect_timeout=15.0, read_timeout=15.0)
+    else:
+        request = None
     # Инициализация Telegram бота
     bot_token = config.get('DEFAULT', 'bot_token')
     bot = telebot.TeleBot(bot_token)
+    sender_bot = Bot(bot_token, request=request)
+    # Чтение из конфига логина и пароля ВК
+    vk_login = config.get('DEFAULT', 'login')
+    vk_pass = config.get('DEFAULT', 'pass')
+    # Инициализация ВК сессии
+    session = VkApi(login=vk_login, password=vk_pass, auth_handler=auth_handler, captcha_handler=captcha_handler)
+    session.auth()
+    api_vk = session.get_api()
 
     admin_id = config.getint('DEFAULT', 'admin_id')
     bot_config_path = config.get('DEFAULT', 'bot_config_path')
     bot_logs_folder_path = config.get('DEFAULT', 'bot_logs_folder_path')
 
-    commands.setup(bot, admin_id, bot_config_path, bot_logs_folder_path)
+    commands.setup(bot, admin_id, bot_config_path, bot_logs_folder_path, session, api_vk, sender_bot)
     try:
         configparser.ConfigParser().read_file(open(bot_config_path, 'r', encoding='utf-8'))
     except FileNotFoundError:
