@@ -1,17 +1,21 @@
 import configparser
 import telebot
+from telebot import apihelper
 import sys
 import commands
 from loguru import logger
 
 warn_message = 'Невозможно прочитать конфигурацию бота TG_AutoPoster. ' \
-                'Вследвии этого не будут работать команды /list /sources_list /remove /add /get_config'
+                'В следствии этого не будут работать команды /list /sources_list /remove /add /get_config'
 
 
 def main():
     # Чтение конфигурации бота из файла config.ini
     config = configparser.ConfigParser()
     config.read_file(open('config.ini', 'r', encoding='utf-8'))
+    # Настройка прокси, если указано в конфиге
+    if config.get('DEFAULT', 'proxy_url', fallback=None):
+        apihelper.proxy = {'https': config.get('DEFAULT', 'proxy_url')}
     # Инициализация Telegram бота
     bot_token = config.get('DEFAULT', 'bot_token')
     bot = telebot.TeleBot(bot_token)

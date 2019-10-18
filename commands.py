@@ -24,12 +24,14 @@ def setup(bot, admin_id, bot_config_path, bot_logs_folder_path):
     @bot.message_handler(func=admin_check, commands=['get_full_logs'])
     def send_full_logs(message):
         try:
-            logs = os.path.join(bot_logs_folder_path, sorted(os.listdir(bot_logs_folder_path))[-1])
+            logs = sorted(os.listdir(bot_logs_folder_path))
+            for i in range(len(logs)):
+                logs[i] = os.path.join(bot_logs_folder_path, logs[i])
         except (FileNotFoundError, IndexError):
             logs = None
         if logs:
             bot.reply_to(message, 'Логи отправлены.')
-            bot.send_document(message.from_user.id, open(logs, 'rb'))
+            bot.send_document(message.from_user.id, open(logs[-1], 'rb'))
         else:
             bot.reply_to(message, 'Логи не найдены.')
 
