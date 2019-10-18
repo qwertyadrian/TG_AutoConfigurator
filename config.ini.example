@@ -7,3 +7,7 @@ admin_id =
 bot_config_path = ../config.ini
 # Абсолютный путь (или относительный) к папке logs (логов) бота TG_AutoPoster, который занимается автопостингом.
 bot_logs_folder_path = ../logs
+# Прокси сервер (если необходимо)
+# Логин и пароль от ВК
+login =
+pass = 

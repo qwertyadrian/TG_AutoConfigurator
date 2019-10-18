@@ -2,3 +2,4 @@ pyTelegramBotAPI
 loguru
 python-daemon
 python-telegram-bot[socks]
+vk_api

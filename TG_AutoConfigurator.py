@@ -31,7 +31,8 @@ def main():
     vk_login = config.get('DEFAULT', 'login')
     vk_pass = config.get('DEFAULT', 'pass')
     # Инициализация ВК сессии
-    session = VkApi(login=vk_login, password=vk_pass, auth_handler=auth_handler, captcha_handler=captcha_handler)
+    session = VkApi(login=vk_login, password=vk_pass, auth_handler=auth_handler, captcha_handler=captcha_handler,
+                    config_filename='../vk_config.v2.json')
     session.auth()
     api_vk = session.get_api()
 
@@ -49,7 +50,7 @@ def main():
 
 
 if __name__ == '__main__':
-    if sys.platform == 'linux':
+    if sys.platform == 'linux' and ('--daemon' in sys.argv or '-d' in sys.argv):
         import daemon
         import daemon.pidfile
 
