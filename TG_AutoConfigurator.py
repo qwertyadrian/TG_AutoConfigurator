@@ -1,16 +1,17 @@
+import sys
+sys.path.append('../')
 import configparser
 import telebot
 from telegram.utils.request import Request
 from telegram import Bot
 from telebot import apihelper
-import sys
 import commands
 from loguru import logger
 from vk_api import VkApi
 from handlers import *
 
 warn_message = 'Невозможно прочитать конфигурацию бота TG_AutoPoster. ' \
-                'В следствии этого не будут работать команды /list /sources_list /remove /add /get_config'
+               'В следствии этого не будут работать команды /list /sources_list /remove /add /get_config'
 
 
 def main():
