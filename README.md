@@ -1,12 +1,9 @@
 ## TG_AutoConfigurator
 Бот-конфигуратор, используемый для кофигурации автопостинга (бота [TG_AutoPoster](https://github.com/qwertyadrian/TG_AutoPoster)) через Telegram чат.
-
-#### Внимание! В Linux системах бот может работать в режиме демона.
-Для этого необходимо передать аргумент `-d` (или `--daemon`).
-
-То есть вы можете запустить бота в консоли и выйти из нее, не завершая при этом работу бота.
-В Windows по техническим причинам реализация этого режима работы затруднена.
-##### На данный момент бот-конфигуратор работает, только если он находится в папке бота TG_AutoPoster.
 ***
 
-Для настройки бота создайте файл config.ini и скопируйте в него содердимое файла [config.ini.example](/config.ini.example)
+#### Установка:
+1. Клонируйте репозиторий с помощью команды: `git clone https://github.com/qwertyadrian/TG_AutoConfigurator`
+2. Перейдите в папку TG_AutoConfigurator: `cd TG_AutoConfigurator`
+3. Установите зависимости: `pip3 install -r requirements.txt`
+4. Запустите бота командой: `python3 -m TG_AutoConfigurator -c <Путь к конфиг файлу бота TG_AutoPoster>`, `Ctrl+C` для остановки бота

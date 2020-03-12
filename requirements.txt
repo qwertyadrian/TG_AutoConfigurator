@@ -1,5 +1,2 @@
-pyTelegramBotAPI
+pyrogram[fast]
 loguru
-python-daemon
-python-telegram-bot[socks]
-vk_api

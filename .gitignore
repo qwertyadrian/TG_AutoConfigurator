@@ -116,3 +116,6 @@ venv.bak/
 tests/
 config.ini
 *.pid
+
+*.session
+*.session-journal
