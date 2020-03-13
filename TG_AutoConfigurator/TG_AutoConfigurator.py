@@ -56,17 +56,17 @@ class AutoConfigurator(Client):
         self.config.add_section(domain)
         self.config.set(domain, "channel", chat_id)
         self.config.set(domain, "last_id", last_id)
-        self._save_config()
+        self.save_config()
         return domain, chat_id, last_id
 
     def remove_config_section(self, section: str) -> Tuple[str, str, str]:
         channel = self.config.get(section, "channel")
         last_id = self.config.get(section, "last_id")
         self.config.remove_section(section)
-        self._save_config()
+        self.save_config()
         return section, channel, last_id
 
-    def _save_config(self):
+    def save_config(self):
         with open(self.config_path, "w", encoding="utf-8") as f:
             self.config.write(f)
         logger.debug("Config saved.")

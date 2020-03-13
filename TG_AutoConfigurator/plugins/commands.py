@@ -98,6 +98,14 @@ def add_source(bot: AutoConfigurator, message: Message):
             message.reply(messages.ADD)
 
 
+@AutoConfigurator.on_message(Filters.command(commands=["settings"]))
+def settings(bot: AutoConfigurator, message: Message):
+    if tools.admin_check(bot, message):
+        bot.reload_config()
+        info, reply_markup = tools.generate_setting_info(bot)
+        message.reply(info, reply_markup=reply_markup)
+
+
 @AutoConfigurator.on_message(Filters.command(commands=["get_config"]) & Filters.private)
 def get_config(bot: AutoConfigurator, message: Message):
     if tools.admin_check(bot, message):

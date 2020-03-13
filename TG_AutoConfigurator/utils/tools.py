@@ -1,9 +1,10 @@
-from typing import List, Union
+from typing import List, Union, Tuple
 
 from loguru import logger
-from pyrogram import CallbackQuery, InlineKeyboardButton, InlineQuery, Message
+from pyrogram import CallbackQuery, InlineKeyboardButton, InlineQuery, Message, InlineKeyboardMarkup
 
 from ..TG_AutoConfigurator import AutoConfigurator
+from ..utils import messages
 
 # Символы, на которых можно разбить сообщение
 message_breakers = [":", " ", "\n"]
@@ -54,3 +55,42 @@ def split(text: str):
         return [good_part] + split(bad_part)
     else:
         return [text]
+
+
+def generate_setting_info(bot: AutoConfigurator) -> Tuple[str, InlineKeyboardMarkup]:
+    info = messages.GLOBAL_SETTINGS.format(
+        bot.config.get("global", "what_to_send"),
+    )
+    reposts = bot.config.get("global", "send_reposts")
+    if reposts in ("yes", "all", "True", 2):
+        reposts = "✔️"
+    elif reposts in ("no", "False", 0):
+        reposts = "❌"
+    else:
+        reposts = "частичная"
+        info += messages.PARTIAL_REPOSTS
+    button_list = [
+        InlineKeyboardButton(
+            "Подпись постов: {}".format(
+                "✔️" if bot.config.getboolean("global", "sign_posts") else "❌"
+            ), callback_data="switch sign_posts"
+        ),
+        InlineKeyboardButton(
+            "Отправка репостов: {}".format(
+                reposts
+            ), callback_data="switch send_reposts"
+        ),
+        InlineKeyboardButton(
+            "Уведомления: {}".format(
+                "❌" if bot.config.getboolean("global", "disable_notification") else "✔️"
+            ), callback_data="switch disable_notification"
+        ),
+        InlineKeyboardButton(
+            "Отправка историй: {}".format(
+                "✔️" if bot.config.getboolean("global", "send_stories") else "❌"
+            ), callback_data="switch send_stories"
+        )
+    ]
+    reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=1))
+
+    return info, reply_markup
