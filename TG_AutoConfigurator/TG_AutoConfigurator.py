@@ -1,6 +1,7 @@
 import argparse
 import configparser
 import os
+from typing import Tuple
 
 from loguru import logger
 from pyrogram import Client
@@ -50,7 +51,7 @@ class AutoConfigurator(Client):
 
         self.set_parse_mode("markdown")
 
-    def add_config_section(self, domain: str, chat_id: str, last_id: str = "0") -> tuple:
+    def add_config_section(self, domain: str, chat_id: str, last_id: str = "0") -> Tuple[str, str, str]:
         domain = domain.replace("https://vk.com/", "").replace("https://m.vk.com/", "")
         self.config.add_section(domain)
         self.config.set(domain, "channel", chat_id)
@@ -58,7 +59,7 @@ class AutoConfigurator(Client):
         self._save_config()
         return domain, chat_id, last_id
 
-    def remove_config_section(self, section: str) -> tuple:
+    def remove_config_section(self, section: str) -> Tuple[str, str, str]:
         channel = self.config.get(section, "channel")
         last_id = self.config.get(section, "last_id")
         self.config.remove_section(section)
