@@ -24,7 +24,7 @@ def admin_check(bot: AutoConfigurator, message: Message):
 @AutoConfigurator.on_message(Filters.command(commands=["start", "help"]) & Filters.private)
 def send_welcome(bot: AutoConfigurator, message: Message):
     if admin_check(bot, message):
-        message.reply(messages.HELP, parse_mode="html")
+        message.reply(messages.HELP.format(bot.get_me().username), parse_mode="html")
 
 
 @AutoConfigurator.on_message(Filters.command(commands="get_full_logs") & Filters.private)
