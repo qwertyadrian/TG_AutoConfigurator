@@ -57,40 +57,61 @@ def split(text: str):
         return [text]
 
 
-def generate_setting_info(bot: AutoConfigurator) -> Tuple[str, InlineKeyboardMarkup]:
-    info = messages.GLOBAL_SETTINGS.format(
-        bot.config.get("global", "what_to_send"),
-    )
-    reposts = bot.config.get("global", "send_reposts")
+def generate_setting_info(bot: AutoConfigurator, source: str) -> Tuple[str, InlineKeyboardMarkup]:
+    if source != "global":
+        text = messages.INLINE_INPUT_MESSAGE_CONTENT.format(
+            source,
+            bot.config.get(source, "channel"),
+            bot.config.get(source, "last_id", fallback=0),
+            bot.config.get(source, "last_story_id", fallback=0),
+            bot.config.get(source, "pinned_id", fallback=0),
+        ) + "Отправляемые вложения: `{}`".format(
+            bot.config.get(source, "what_to_send", fallback=bot.config.get("global", "what_to_send"))
+        )
+        footer_button = [InlineKeyboardButton("Удалить источник", callback_data="delete " + source)]
+    else:
+        text = messages.GLOBAL_SETTINGS.format(
+            bot.config.get(source, "what_to_send", fallback=bot.config.get("global", "what_to_send"))
+        )
+        footer_button = None
+    reposts = bot.config.get(source, "send_reposts", fallback=bot.config.get("global", "send_reposts"))
     if reposts in ("yes", "all", "True", 2):
         reposts = "✔️"
     elif reposts in ("no", "False", 0):
         reposts = "❌"
-    else:
-        reposts = "частичная"
-        info += messages.PARTIAL_REPOSTS
+    elif reposts in ("post_only", 1):
+        reposts = "Только пост"
+        text += messages.PARTIAL_REPOSTS
     button_list = [
         InlineKeyboardButton(
-            "Подпись постов: {}".format(
-                "✔️" if bot.config.getboolean("global", "sign_posts") else "❌"
-            ), callback_data="switch sign_posts"
+            "Подписи: {}".format(
+                "✔️"
+                if bot.config.getboolean(source, "sign_posts", fallback=bot.config.getboolean("global", "sign_posts"))
+                else "❌"
+            ),
+            callback_data="switch {} sign_posts".format(source),
         ),
-        InlineKeyboardButton(
-            "Отправка репостов: {}".format(
-                reposts
-            ), callback_data="switch send_reposts"
-        ),
+        InlineKeyboardButton("Репосты: {}".format(reposts), callback_data="switch {} send_reposts".format(source)),
         InlineKeyboardButton(
             "Уведомления: {}".format(
-                "❌" if bot.config.getboolean("global", "disable_notification") else "✔️"
-            ), callback_data="switch disable_notification"
+                "❌"
+                if bot.config.getboolean(
+                    source, "disable_notification", fallback=bot.config.getboolean("global", "disable_notification")
+                )
+                else "✔️"
+            ),
+            callback_data="switch {} disable_notification".format(source),
         ),
         InlineKeyboardButton(
-            "Отправка историй: {}".format(
-                "✔️" if bot.config.getboolean("global", "send_stories") else "❌"
-            ), callback_data="switch send_stories"
-        )
+            "Истории: {}".format(
+                "✔️"
+                if bot.config.getboolean(
+                    source, "send_stories", fallback=bot.config.getboolean("global", "send_stories")
+                )
+                else "❌"
+            ),
+            callback_data="switch {} send_stories".format(source),
+        ),
     ]
-    reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=1))
 
-    return info, reply_markup
+    return text, InlineKeyboardMarkup(build_menu(button_list, footer_buttons=footer_button, n_cols=2))

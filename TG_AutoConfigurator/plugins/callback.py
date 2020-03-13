@@ -1,4 +1,4 @@
-from configparser import NoSectionError
+from configparser import NoSectionError, NoOptionError
 
 from pyrogram import CallbackQuery
 
@@ -24,17 +24,17 @@ def callback(bot: AutoConfigurator, callback_query: CallbackQuery):
             callback_query.edit_message_text(info)
         elif data[0] == "switch":
             bot.reload_config()
-            if data[1] != "send_reposts":
-                option = bot.config.getboolean("global", data[1])
-                bot.config.set("global", data[1], str(not option))
+            if data[2] != "send_reposts":
+                option = bot.config.getboolean(data[1], data[2], fallback=bot.config.getboolean("global", data[2]))
+                bot.config.set(data[1], data[2], str(not option))
             else:
-                option = bot.config.get("global", "send_reposts")
+                option = bot.config.get(data[1], "send_reposts", fallback=bot.config.get("global", "send_reposts"))
                 if option in ("no", "False", 0):
-                    bot.config.set("global", data[1], "post_only")
+                    bot.config.set(data[1], "send_reposts", "post_only")
                 elif option in ("post_only", 1):
-                    bot.config.set("global", data[1], "all")
+                    bot.config.set(data[1], "send_reposts", "all")
                 elif option in ("yes", "all", "True", 2):
-                    bot.config.set("global", data[1], "no")
+                    bot.config.set(data[1], "send_reposts", "no")
             bot.save_config()
-            info, reply_markup = tools.generate_setting_info(bot)
-            callback_query.edit_message_text(info, reply_markup=reply_markup)
+            info, reply_markup = tools.generate_setting_info(bot, data[1])
+            callback_query.edit_message_text(info, reply_markup=reply_markup, disable_web_page_preview=True)

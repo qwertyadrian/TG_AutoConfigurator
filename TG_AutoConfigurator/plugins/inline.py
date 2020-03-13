@@ -1,8 +1,7 @@
-from pyrogram import (InlineKeyboardButton, InlineKeyboardMarkup, InlineQuery, InlineQueryResultArticle,
-                      InputTextMessageContent)
+from pyrogram import InlineQuery, InlineQueryResultArticle, InputTextMessageContent
 
 from ..TG_AutoConfigurator import AutoConfigurator
-from ..utils import messages, tools
+from ..utils import tools
 
 
 @AutoConfigurator.on_inline_query()
@@ -17,16 +16,7 @@ def inline(bot: AutoConfigurator, query: InlineQuery):
 
         for source in sources_list:
             if not string or source.startswith(string):
-                button_list = []
-                text = messages.INLINE_INPUT_MESSAGE_CONTENT.format(
-                    source,
-                    bot.config.get(source, "channel"),
-                    bot.config.get(source, "last_id", fallback=0),
-                    bot.config.get(source, "last_story_id", fallback=0),
-                    bot.config.get(source, "pinned_id", fallback=0),
-                )
-                button_list.append(InlineKeyboardButton("Удалить источник", callback_data="delete " + source))
-                reply_markup = InlineKeyboardMarkup(tools.build_menu(button_list))
+                text, reply_markup = tools.generate_setting_info(bot, source)
                 results.append(
                     InlineQueryResultArticle(
                         title=source,

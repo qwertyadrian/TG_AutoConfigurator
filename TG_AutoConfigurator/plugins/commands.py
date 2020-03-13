@@ -102,7 +102,7 @@ def add_source(bot: AutoConfigurator, message: Message):
 def settings(bot: AutoConfigurator, message: Message):
     if tools.admin_check(bot, message):
         bot.reload_config()
-        info, reply_markup = tools.generate_setting_info(bot)
+        info, reply_markup = tools.generate_setting_info(bot, "global")
         message.reply(info, reply_markup=reply_markup)
 
 
