@@ -91,7 +91,7 @@ def generate_setting_info(bot: AutoConfigurator, source: str) -> Tuple[str, Inli
             ),
             callback_data="switch {} sign_posts".format(source),
         ),
-        InlineKeyboardButton("Репосты: {}".format(reposts), callback_data="switch {} send_reposts".format(source)),
+        InlineKeyboardButton("Репосты: {}".format(reposts), callback_data="show {} send_reposts".format(source)),
         InlineKeyboardButton(
             "Уведомления: {}".format(
                 "❌"
