@@ -66,15 +66,15 @@ def generate_setting_info(bot: AutoConfigurator, source: str) -> Tuple[str, Inli
             bot.config.get(source, "last_story_id", fallback=0),
             bot.config.get(source, "pinned_id", fallback=0),
         ) + "Отправляемые вложения: `{}`".format(
-            bot.config.get(source, "what_to_send", fallback=bot.config.get("global", "what_to_send"))
+            bot.config.get(source, "what_to_send", fallback=bot.config.get("global", "what_to_send", fallback="всё"))
         )
         footer_button = [InlineKeyboardButton("Удалить источник", callback_data="delete " + source)]
     else:
         text = messages.GLOBAL_SETTINGS.format(
-            bot.config.get(source, "what_to_send", fallback=bot.config.get("global", "what_to_send"))
+            bot.config.get(source, "what_to_send", fallback=bot.config.get("global", "what_to_send", fallback="всё"))
         )
         footer_button = None
-    reposts = bot.config.get(source, "send_reposts", fallback=bot.config.get("global", "send_reposts"))
+    reposts = bot.config.get(source, "send_reposts", fallback=bot.config.get("global", "send_reposts", fallback=0))
     if reposts in ("yes", "all", "True", 2):
         reposts = "✔️"
     elif reposts in ("no", "False", 0):
@@ -86,7 +86,9 @@ def generate_setting_info(bot: AutoConfigurator, source: str) -> Tuple[str, Inli
         InlineKeyboardButton(
             "Подписи: {}".format(
                 "✔️"
-                if bot.config.getboolean(source, "sign_posts", fallback=bot.config.getboolean("global", "sign_posts"))
+                if bot.config.getboolean(
+                    source, "sign_posts", fallback=bot.config.getboolean("global", "sign_posts", fallback=True)
+                )
                 else "❌"
             ),
             callback_data="switch {} sign_posts".format(source),
@@ -96,7 +98,9 @@ def generate_setting_info(bot: AutoConfigurator, source: str) -> Tuple[str, Inli
             "Уведомления: {}".format(
                 "❌"
                 if bot.config.getboolean(
-                    source, "disable_notification", fallback=bot.config.getboolean("global", "disable_notification")
+                    source,
+                    "disable_notification",
+                    fallback=bot.config.getboolean("global", "disable_notification", fallback=False),
                 )
                 else "✔️"
             ),
@@ -106,11 +110,23 @@ def generate_setting_info(bot: AutoConfigurator, source: str) -> Tuple[str, Inli
             "Истории: {}".format(
                 "✔️"
                 if bot.config.getboolean(
-                    source, "send_stories", fallback=bot.config.getboolean("global", "send_stories")
+                    source, "send_stories", fallback=bot.config.getboolean("global", "send_stories", fallback=False)
                 )
                 else "❌"
             ),
             callback_data="switch {} send_stories".format(source),
+        ),
+        InlineKeyboardButton(
+            "Превью ссылок: {}".format(
+                "❌"
+                if bot.config.getboolean(
+                    source,
+                    "disable_web_page_preview",
+                    fallback=bot.config.getboolean("global", "disable_web_page_preview", fallback=True),
+                )
+                else "✔️"
+            ),
+            callback_data="switch {} disable_web_page_preview".format(source),
         ),
     ]
 
