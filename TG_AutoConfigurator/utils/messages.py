@@ -44,3 +44,28 @@ PARTIAL_REPOSTS = (
     "\n\nТолько пост (частичная отправка) означает отправлять пост без самого репоста"
     " (если пост содержит только репост, он не будет отправлен)"
 )
+
+SOURCE_USE_GLOBAL_SETTINGS = (
+    "Этот источник использует общие настройки отправки репостов (См. в /settings)."
+    "Измения настроек здесь приведет к их переопределению\n"
+)
+
+SECTION_DELETED = (
+    "Источник {0[0]} был удален.\nДля его восстановления используйте команду"
+    " `/add {0[0]} {0[1]} {0[2]} {0[3]} {0[4]}`"
+)
+
+LOG_MESSAGE = (
+    "Пользователь {message.from_user.first_name} {message.from_user.last_name} "
+    "c ID {message.from_user.id} использовал команду {message.text}"
+)
+
+LOG_INLINE_QUERY = (
+    "Пользователь {message.from_user.first_name} {message.from_user.last_name} "
+    "c ID {message.from_user.id} выполнил запрос со следующим текстом: {message.query}"
+)
+
+LOG_CALLBACK_QUERY = (
+    "Пользователь {message.from_user.first_name} {message.from_user.last_name} "
+    "c ID {message.from_user.id} использовал обратный запрос со следущим содержимым {message.data}"
+)

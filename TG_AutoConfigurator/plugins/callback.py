@@ -17,10 +17,7 @@ def callback(bot: AutoConfigurator, callback_query: CallbackQuery):
             except NoSectionError:
                 info = "Источник {} не был найден. Возможно он был уже удален.".format(data[1])
             else:
-                info = (
-                    "Источник {0[0]} был удален.\nДля его восстановления используйте команду"
-                    " `/add {0[0]} {0[1]} {0[2]}`".format(section)
-                )
+                info = messages.SECTION_DELETED.format(section)
             callback_query.edit_message_text(info)
             return
 
@@ -73,10 +70,7 @@ def callback(bot: AutoConfigurator, callback_query: CallbackQuery):
                     option = bot.config.get(data[1], "send_reposts")
                 else:
                     option = bot.config.get("global", "send_reposts")
-                    info = (
-                        "Этот источник использует общие настройки отправки репостов (См. в /settings)."
-                        "Измения настроек здесь приведет к их переопределению\n"
-                    )
+                    info = messages.SOURCE_USE_GLOBAL_SETTINGS
                 if option in ("no", "False", 0):
                     info += "Отправка репостов отключена"
                 elif option in ("post_only", 1):

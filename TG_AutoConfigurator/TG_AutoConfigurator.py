@@ -51,20 +51,26 @@ class AutoConfigurator(Client):
 
         self.set_parse_mode("markdown")
 
-    def add_config_section(self, domain: str, chat_id: str, last_id: str = "0") -> Tuple[str, str, str]:
+    def add_config_section(
+        self, domain: str, chat_id: str, last_id: str = "0", pinned_id: str = "0", last_story_id: str = "0"
+    ) -> Tuple[str, str, str, str, str]:
         domain = domain.replace("https://vk.com/", "").replace("https://m.vk.com/", "")
         self.config.add_section(domain)
         self.config.set(domain, "channel", chat_id)
         self.config.set(domain, "last_id", last_id)
+        self.config.set(domain, "pinned_id", pinned_id)
+        self.config.set(domain, "last_story_id", last_story_id)
         self.save_config()
-        return domain, chat_id, last_id
+        return domain, chat_id, last_id, pinned_id, last_story_id
 
-    def remove_config_section(self, section: str) -> Tuple[str, str, str]:
+    def remove_config_section(self, section: str) -> Tuple[str, str, str, str, str]:
         channel = self.config.get(section, "channel")
-        last_id = self.config.get(section, "last_id")
+        last_id = self.config.get(section, "last_id", fallback=0)
+        pinned_id = self.config.get(section, "pinned_id", fallback=0)
+        last_story_id = self.config.get(section, "last_story_id", fallback=0)
         self.config.remove_section(section)
         self.save_config()
-        return section, channel, last_id
+        return section, channel, last_id, pinned_id, last_story_id
 
     def save_config(self):
         with open(self.config_path, "w", encoding="utf-8") as f:

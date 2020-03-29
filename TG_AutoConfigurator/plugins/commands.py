@@ -77,10 +77,7 @@ def remove_source(bot: AutoConfigurator, message: Message):
         if len(message.command) > 1:
             bot.reload_config()
             section = bot.remove_config_section(message.command[1])
-            info = (
-                "Источник {0[0]} был удален.\nДля его восстановления используйте команду"
-                " `/add {0[0]} {0[1]} {0[2]}`".format(section)
-            )
+            info = messages.SECTION_DELETED.format(section)
             message.reply(info)
         else:
             message.reply(messages.REMOVE)

@@ -14,20 +14,17 @@ max_message_length = 4091
 def admin_check(bot: AutoConfigurator, message: Union[Message, InlineQuery, CallbackQuery]) -> bool:
     if isinstance(message, Message):
         logger.info(
-            "Пользователь {message.from_user.first_name} {message.from_user.last_name} "
-            "c ID {message.from_user.id} использовал команду {message.text}",
+            messages.LOG_MESSAGE,
             message=message,
         )
     elif isinstance(message, InlineQuery):
         logger.info(
-            "Пользователь {message.from_user.first_name} {message.from_user.last_name} "
-            "c ID {message.from_user.id} выполнил запрос со следующим текстом: {message.query}",
+            messages.LOG_INLINE_QUERY,
             message=message,
         )
     elif isinstance(message, CallbackQuery):
         logger.info(
-            "Пользователь {message.from_user.first_name} {message.from_user.last_name} "
-            "c ID {message.from_user.id} использовал обратный запрос со следущим содержимым {message.data}",
+            messages.LOG_CALLBACK_QUERY,
             message=message,
         )
     return message.from_user.id == bot.admin_id
