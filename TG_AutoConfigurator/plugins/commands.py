@@ -95,7 +95,7 @@ def add_source(bot: AutoConfigurator, message: Message):
             message.reply(messages.ADD)
 
 
-@AutoConfigurator.on_message(Filters.command(commands=["settings"]))
+@AutoConfigurator.on_message(Filters.command(commands=["settings"]) & Filters.private)
 def settings(bot: AutoConfigurator, message: Message):
     if tools.admin_check(bot, message):
         bot.reload_config()
@@ -106,5 +106,19 @@ def settings(bot: AutoConfigurator, message: Message):
 @AutoConfigurator.on_message(Filters.command(commands=["get_config"]) & Filters.private)
 def get_config(bot: AutoConfigurator, message: Message):
     if tools.admin_check(bot, message):
-        message.reply("Конфигурация бота:\n ```{}```".format(open(bot.config_path).read()))
+        message.reply("Конфигурация бота:\n```{}```".format(open(bot.config_path).read()))
         message.reply_document(document=bot.config_path, caption="Файл конфигурации бота.")
+
+
+@AutoConfigurator.on_message(Filters.command(commands=["get_id"]))
+def get_id(_, message: Message):
+    message.reply("Chat id is `{}`".format(message.chat.id))
+
+
+@AutoConfigurator.on_message(Filters.forwarded)
+def get_forward_id(_, message: Message):
+    if message.forward_from:
+        id_ = message.forward_from.id
+    else:
+        id_ = message.forward_from_chat.id
+    message.reply("Channel (user) ID is `{}`".format(id_))
