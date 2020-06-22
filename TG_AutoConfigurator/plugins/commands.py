@@ -1,7 +1,7 @@
 import os
 from random import choice
 
-from pyrogram import Filters, Message
+from pyrogram import Filters, Message, InlineKeyboardButton, InlineKeyboardMarkup
 
 from ..TG_AutoConfigurator import AutoConfigurator
 from ..utils import messages, tools
@@ -10,7 +10,9 @@ from ..utils import messages, tools
 @AutoConfigurator.on_message(Filters.command(commands=["start", "help"]) & Filters.private)
 def send_welcome(bot: AutoConfigurator, message: Message):
     if tools.admin_check(bot, message):
-        message.reply(messages.HELP.format(bot.get_me().username), parse_mode="html")
+        button = [[InlineKeyboardButton("Поиск среди источников", switch_inline_query_current_chat="")]]
+        message.reply(messages.HELP.format(bot.get_me().username), parse_mode="html", disable_web_page_preview=True,
+                      reply_markup=InlineKeyboardMarkup(button))
 
 
 @AutoConfigurator.on_message(Filters.command(commands="get_full_logs") & Filters.private)
@@ -108,6 +110,11 @@ def get_config(bot: AutoConfigurator, message: Message):
     if tools.admin_check(bot, message):
         message.reply("Конфигурация бота:\n```{}```".format(open(bot.config_path).read()))
         message.reply_document(document=bot.config_path, caption="Файл конфигурации бота.")
+
+
+@AutoConfigurator.on_message(Filters.command(commands=["about"]) & Filters.private)
+def about(_, message: Message):
+    message.reply(messages.ABOUT, disable_web_page_preview=True)
 
 
 @AutoConfigurator.on_message(Filters.command(commands=["get_id"]))
