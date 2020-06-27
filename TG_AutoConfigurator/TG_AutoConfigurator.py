@@ -6,7 +6,7 @@ from typing import Tuple
 from loguru import logger
 from pyrogram import Client
 
-CONFIG_PATH = os.path.join(os.getcwd(), "config.ini")
+BOT_PATH = os.getcwd()
 PLUGINS_PATH = os.path.join(os.path.relpath(os.path.dirname(__file__)), "plugins")
 
 
@@ -24,26 +24,31 @@ def create_parser():
     parser.add_argument(
         "-c",
         "--config",
-        default=CONFIG_PATH,
-        help="Путь к конфиг файлу бота TG_AutoPoster (по умолчанию {})".format(CONFIG_PATH),
+        default=BOT_PATH,
+        help="Путь к папке с ботом TG_AutoPoster (по умолчанию {})".format(BOT_PATH),
     )
 
     return parser
 
 
 class AutoConfigurator(Client):
-    def __init__(self, config_file=CONFIG_PATH, ipv6=False):
-        self.config_path = config_file
-        self.config = configparser.ConfigParser()
+    def __init__(self, bot_path=BOT_PATH, ipv6=False):
+        if "config.ini" in bot_path:
+            self.bot_path = os.path.dirname(bot_path)
+        else:
+            self.bot_path = bot_path
 
+        self.config_file = os.path.join(self.bot_path, "config.ini")
+        self.bot_logs_folder_path = os.path.join(self.bot_path, "logs")
+
+        self.config = configparser.ConfigParser()
         self.reload_config()
 
         self.admin_id = self.config.getint("global", "admin_id")
-        self.bot_logs_folder_path = os.path.join(".", "logs")
 
         super().__init__(
             "TG_AutoConfigurator",
-            config_file=config_file,
+            config_file=self.config_file,
             ipv6=ipv6,
             plugins=dict(root=PLUGINS_PATH),
             workdir="."
@@ -73,11 +78,11 @@ class AutoConfigurator(Client):
         return section, channel, last_id, pinned_id, last_story_id
 
     def save_config(self):
-        with open(self.config_path, "w", encoding="utf-8") as f:
+        with open(self.config_file, "w", encoding="utf-8") as f:
             self.config.write(f)
         logger.debug("Config saved.")
 
     def reload_config(self):
         self.config.clear()
-        self.config.read(self.config_path)
+        self.config.read(self.config_file)
         logger.debug("Config reloaded.")

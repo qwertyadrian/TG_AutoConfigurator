@@ -57,7 +57,7 @@ def split(text: str):
 def generate_setting_info(bot: AutoConfigurator, source: str) -> Tuple[str, InlineKeyboardMarkup]:
     if source != "global":
         text = messages.INLINE_INPUT_MESSAGE_CONTENT.format(
-            source,
+            source.replace("https://vk.com/", "").replace("https://m.vk.com/", ""),
             bot.config.get(source, "channel"),
             bot.config.get(source, "last_id", fallback=0),
             bot.config.get(source, "last_story_id", fallback=0),

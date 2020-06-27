@@ -108,8 +108,8 @@ def settings(bot: AutoConfigurator, message: Message):
 @AutoConfigurator.on_message(Filters.command(commands=["get_config"]) & Filters.private)
 def get_config(bot: AutoConfigurator, message: Message):
     if tools.admin_check(bot, message):
-        message.reply("Конфигурация бота:\n```{}```".format(open(bot.config_path).read()))
-        message.reply_document(document=bot.config_path, caption="Файл конфигурации бота.")
+        message.reply("Конфигурация бота:\n```{}```".format(open(bot.config_file).read()))
+        message.reply_document(document=bot.config_file, caption="Файл конфигурации бота.")
 
 
 @AutoConfigurator.on_message(Filters.command(commands=["about"]) & Filters.private)
