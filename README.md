@@ -1,4 +1,5 @@
-## TG_AutoConfigurator
+## Бот был объединен с [TG_AutoPoster](https://github.com/qwertyadrian/TG_AutoPoster)
+### TG_AutoConfigurator
 Бот-конфигуратор, используемый для кофигурации автопостинга (бота [TG_AutoPoster](https://github.com/qwertyadrian/TG_AutoPoster)) через Telegram чат.
 ***
 
